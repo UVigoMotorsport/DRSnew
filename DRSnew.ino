@@ -7,34 +7,34 @@
 #define STEERING A5
 #define MINPRESS 50
 
-#define UPRIGHT 12
-#define UPLEFT 11
-#define DOWNRIGHT A0
-#define DOWNLEFT A1
-
-#define MIN_RIGHT 910
-#define MIN_LEFT 2000
-
-#define MAX_RIGHT 2000
-#define MAX_LEFT 910
+#define UPRIGHT A0
+#define UPLEFT A1
+#define DOWNRIGHT A2
+#define DOWNLEFT A3
 
 Servo UpRight;
 Servo UpLeft;
 Servo DownRight;
 Servo DownLeft;
 
-#define CLOSE_UpRight 2050
-#define OPEN_UpRight 1560
+#define CLOSE_UpRight 2170
+#define OPEN_UpRight 1610
 
-#define CLOSE_UpLeft 970
-#define OPEN_UpLeft  1440
+#define CLOSE_UpLeft 940
+#define OPEN_UpLeft  1460
 
 
-#define CLOSE_DownRight 1070
-#define OPEN_DownRight 1450
+#define CLOSE_DownRight 2000
+#define OPEN_DownRight 1610
 
-#define CLOSE_DownLeft 1920
-#define OPEN_DownLeft 1550
+#define CLOSE_DownLeft 1050
+#define OPEN_DownLeft 1425
+
+#define MIN_RIGHT 950
+#define MIN_LEFT 2000
+
+#define MAX_RIGHT 2000
+#define MAX_LEFT 950
 
 int debouncedrs = 0;
 unsigned int debouncetimedrs = 0;
@@ -78,7 +78,7 @@ void setup()
     DownLeft.writeMicroseconds (MAX_RIGHT  + rightinc);
     rightinc -= 10;
     leftinc += 10;
-    delay(30);
+    delay(5);
     if (MAX_RIGHT + rightinc <= MIN_RIGHT || MAX_LEFT + leftinc >= MIN_LEFT)
     {
       break;
@@ -88,7 +88,7 @@ void setup()
   {
     skipone = 1;
   }
-  delay(50);
+  delay(30);
   rightinc = 0;
   leftinc = 0;
   while (digitalRead(DRS) == 1 && !skipone)
@@ -99,12 +99,13 @@ void setup()
     DownLeft.writeMicroseconds (MIN_RIGHT  + rightinc);
     rightinc += 10;
     leftinc -= 10;
-    delay(30);
+    delay(5);
     if (MIN_RIGHT + rightinc >= MAX_RIGHT || MIN_LEFT + leftinc <= MAX_LEFT)
     {
       break;
     }
   }
+
   delay(100);
 }
 
@@ -141,20 +142,14 @@ void loop()
     }
     else if (debouncedrs == 1 && (millis() - debouncetimedrs) > MINPRESS && releasebut == 0)
     {
-      if (DRS_STATE == CLOSED)
-      {
-        DRS_STATE = OPEN;
-      }
-      else
-      {
-        DRS_STATE = CLOSED;
-      }
+      DRS_STATE = OPEN;
       debouncedrs = 0;
       releasebut = 1;
     }
   }
   else
   {
+    DRS_STATE = CLOSED;
     releasebut = 0;
     debouncedrs = 0;
   }
